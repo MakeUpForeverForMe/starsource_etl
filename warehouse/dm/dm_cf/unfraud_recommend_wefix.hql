@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE dm_cf.unfraud_recommend_wefix PARTITION(year_month,day_of_month)
+sINSERT OVERWRITE TABLE dm_cf.unfraud_recommend_wefix PARTITION(year_month,day_of_month)
 select
 if(atd_black.report_date is null,if(atd_device.report_date is null,atd_ip.report_date,atd_device.report_date),atd_black.report_date) as report_date,
 if(atd_black.appid is null,if(atd_device.appid is null,atd_ip.appid,atd_device.appid),atd_black.appid) as appid,

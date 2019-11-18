@@ -8,21 +8,6 @@ info '从各数据源获取数据' '执行开始'
 
 
 
-edit_time(){
-  sed -i "/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/}" $imex_table
-  # sed -n "/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/p}" $imex_table
-  [[ $? == 0 ]] && \
-  succ "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间成功' || \
-  erro "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间失败'
-
-  sed -i "/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/}" $imex_table
-  # sed -n "/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/p}" $imex_table
-  [[ $? == 0 ]] && \
-  succ "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间成功' || \
-  erro "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间失败'
-}
-
-
 # 一个小测试
 # while read line; do
 #   imex_analyze "${line}"
@@ -108,8 +93,8 @@ while read line; do
 
       edit_time $min_time
       [[ $aimsfile =~ bi ]] && {
-        edit_time $min_time t_ad_action_water.x.log
-        edit_time $min_time t_ad_query_water.x.log
+        edit_time $min_time t_ad_action_water
+        edit_time $min_time t_ad_query_water
       }
     } &
   elif [[ $type == mysql ]]; then # MySQL类型来源

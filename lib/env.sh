@@ -12,14 +12,13 @@
 base_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 env_file=$base_dir/$(basename "${BASH_SOURCE[0]}")
 
+# ---------------===============>>>>>>>>>>>>>>>          不可修改          <<<<<<<<<<<<<<<===============--------------- #
 
 # ----------==========>>>>>>>>>>          基础信息          <<<<<<<<<<==========---------- #
 # 执行机器
 host_name=$(hostname)
 # 执行用户
 user_name=$(whoami)
-# 并行数
-p_num=20
 
 
 
@@ -30,44 +29,47 @@ lib=$base_dir     conf=$base_dir/../conf      bin=$base_dir/../bin
 imex_table=$conf/imex.table
 # 执行文件主目录
 warehouse=$base_dir/../warehouse
-# HDFS主目录
-hdfs_path=/warehouse/tablespace/managed/hive
-# 本地数据存储目录
-data_direct=/hadoop/data
 # 存储导入MySQL数据的目录
 mysql_dir=$data_direct/mysql
-# 数仓层次
-ware_level=(dm)
-
-
 
 
 # ----------==========>>>>>>>>>>          时间配置          <<<<<<<<<<==========---------- #
 # 当前时间/秒
 n_time=$(curr_time)
-# 初始化时间
-# 2019-01-01 00:00:00   2019-10-01 00:00:00   2019-11-01 00:00:00
-# init_time=1546272000  init_time=1569859200  init_time=1572537600
-init_time=1546272000
 # 当前的年月
 yearmonth=$(s_d ym $n_time)
 # 两月之前的年月
 yearmonth_last_2=$(s_d -d '-2' -f month ym $n_time)
 # 当前的天和小时
 dayhour=$(s_d dh)
-# 删除分区距今天时长【day:30,mongth:12,year:2】
-dele_part=year:2
-# 打包限定时间
-unpack_time=1216
-
 
 
 # ----------==========>>>>>>>>>>          日志配置          <<<<<<<<<<==========---------- #
-# info日志文件
+# info日志文件 带有当年的年月时间目录
 info_log=${data_direct}/info.log.${yearmonth}
 # erro日志文件
 erro_log=${data_direct}/erro.log.${yearmonth}
 
+
+
+# ---------------===============>>>>>>>>>>>>>>>          允许修改          <<<<<<<<<<<<<<<===============--------------- #
+
+# 并行数
+p_num=20
+# HDFS主目录
+hdfs_path=/warehouse/tablespace/managed/hive
+# 本地数据存储目录
+data_direct=/hadoop/data
+# 数仓层次
+ware_level=(dm)
+# 初始化时间
+# 2019-01-01 00:00:00   2019-10-01 00:00:00   2019-11-01 00:00:00
+# init_time=1546272000  init_time=1569859200  init_time=1572537600
+init_time=1546272000
+# 删除分区距今天时长【day:30,mongth:12,year:2】
+dele_part=year:2
+# 打包限定时间
+unpack_time=1216
 
 
 # ----------==========>>>>>>>>>>          命令配置          <<<<<<<<<<==========---------- #

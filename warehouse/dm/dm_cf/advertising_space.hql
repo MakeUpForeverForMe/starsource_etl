@@ -14,11 +14,11 @@ with base as (
   action_water.display as action_display,
   action_water.isclick as action_isclick
   from (
-    select id,reqtime,createtime,tagid,acquisitionid,year_month,day_of_month from ods_lowerb.t_ad_query_water
+    select distinct id,reqtime,createtime,tagid,acquisitionid,year_month,day_of_month from ods_wefix.t_ad_query_water_json
     where year_month = '${year_month}' and day_of_month = '${day_of_month}'
   ) as query_water
   left join (
-    select waterid,createtime,display,isclick,year_month,day_of_month from ods_wefix.t_ad_action_water_json
+    select distinct waterid,createtime,display,isclick,year_month,day_of_month from ods_wefix.t_ad_action_water_json
   ) as action_water
   on query_water.id = action_water.waterid
   left join (

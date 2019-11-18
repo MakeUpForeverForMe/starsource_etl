@@ -2,7 +2,7 @@
 
 . $(dirname "${BASH_SOURCE[0]}")/../lib/env.sh
 
-crt_hql=$warehouse/create/crt_hql
+crt_hql=$warehouse/create
 
 for tbl in ${@:-$(ls $crt_hql)}; do
   {

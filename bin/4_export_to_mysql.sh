@@ -46,15 +46,16 @@ while read line; do
     erro "Extract_Hive_${ym}${dm} $hive_dbtable" '抽取Hive数据到本地失败'
 
     [[ $(stat -c %s $mysql_file) == 0 ]] && {
-      warn "LOCAL_File $mysql_file" '文件为空，跳过加载到MySQL'
+      warn "LOCAL_File_${ym}${dm} $mysql_file" '文件为空，跳过加载到MySQL'
       continue
-    } || info "LOCAL_File $mysql_file" '文件为空，跳过加载到MySQL'
+    } || info "LOCAL_File_${ym}${dm} $mysql_file" '文件不为空，加载数据到MySQL'
 
     mysql -P3306 -h${host} -u${user} -p${passwd} -D${aimsdb} -e "LOAD DATA LOCAL INFILE '$mysql_file' REPLACE INTO TABLE ${mysql_table} FIELDS TERMINATED BY ',' (${fields})"
     [[ $? == 0 ]] && \
-    succ "MySQL_Load_Data From_$mysql_file" 'MySQL加载数据到表中，执行成功' || \
-    erro "MySQL_Load_Data From_$mysql_file" 'MySQL加载数据到表中，执行失败'
+    succ "MySQL_Load_Data_${ym}${dm} From_$mysql_file" 'MySQL加载数据到表中，执行成功' || \
+    erro "MySQL_Load_Data_${ym}${dm} From_$mysql_file" 'MySQL加载数据到表中，执行失败'
   done
+  edit_time
 done < $imex_table
 
 

@@ -7,16 +7,15 @@ erro_log &
 
 # 抽取数据
 
+sh $bin/0_add_part.sh
 
-sh $bin/1extract.sh
+sh $bin/1_extract.sh
 
-# sh $bin/0_1add_part.sh
+sh $bin/2_load_hdfs.sh
 
-# sh $bin/2load_hdfs.sh
+sh $bin/3_data_transform.sh
 
-# sh $bin/3data_transform.sh
-
-# sh $bin/4export_to_mysql.sh
+sh $bin/4_export_to_mysql.sh
 
 
 # 服务器测试

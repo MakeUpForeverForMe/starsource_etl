@@ -23,6 +23,7 @@ for level in ${ware_level[@]}; do
       ym=${startDate:0:6} dm=${startDate:6:2}
       startDate=$(diff_day $startDate)
       {
+        info "$aimsdb--${ym}${dm} $table" '开始执行'
         # 小测试，随机等待0-3秒。演示并发
         # sleep $(echo $(( $RANDOM % 3 )))
         # printf '%7s %2s %24s %2s %4s %10s %17s %10s %15s %2s %s\n' \
@@ -33,11 +34,14 @@ for level in ${ware_level[@]}; do
       } &
       p_opera
     done
-
+    edit_time
   done < $imex_table
   # 等待一层结束
   wait_jobs
 done
+
+
+
 
 
 info 'Execute Hql_File' '执行完成'

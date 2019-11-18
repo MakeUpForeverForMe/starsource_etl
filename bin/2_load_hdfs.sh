@@ -37,6 +37,7 @@ while read line; do
     # 普通表
     {
       load_gene_file=$(stor_data $file_type)
+      info "Load $load_gene_file" '开始执行'
       # printf '%4s %3s %4s %2s %-80s %s\n' \
       hdfs dfs -put -f $load_gene_file $load_hdfs_dir
       succ_erro $(s_r_r $load_gene_file)
@@ -50,6 +51,7 @@ while read line; do
         load_part_file=$(stor_data $file_type $min_load_time)
         # 判断文件是否存在
         [[ -f $load_part_file ]] && {
+          info "Load_$load_part_file $min_load_time" '开始执行'
           # printf '%4s %3s %4s %2s %-80s %s\n' \
           hdfs dfs -put -f $load_part_file ${load_hdfs_dir}/year_month=${min_load_time:0:6}/day_of_month=${min_load_time:6:2}
           succ_erro $(s_r_r $load_part_file)
