@@ -2,6 +2,12 @@
 
 . $(dirname "${BASH_SOURCE[0]}")/lib/env.sh
 
+
+info_start='Start File'
+
+info "$info_start" '开始文件执行开始'
+
+
 # 获取日志信息传入到error日志中
 erro_log &
 
@@ -21,3 +27,5 @@ sh $bin/4_export_to_mysql.sh
 # 服务器测试
 ps -ef | grep -v grep | grep -Ew 'tail -F -n 0' | awk '{print $2}' | xargs kill
 
+
+info "$info_start" '开始文件执行结束'
