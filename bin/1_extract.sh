@@ -46,56 +46,61 @@ while read line; do
   table_tmp=($(p_a $table)) table=${table_tmp[0]}
   # 设置日志输出的内容
   thdt=$(echo $type $host $fromdb $(lowe_case $table))
-  # 重新复制开始时间
+  # 重新赋值开始时间
   f_time=$start_time
 
 
   # 判断配置的类型，是从MySQL、Oracle、MongoDB、Local等来源抽取数据到本地
   if [[ $type == local ]]; then # Local类型来源
     {
+      # file：access.*.log
       file=${table}.*.${table_tmp[$(( ${#table_tmp[@]} - 1 ))]}
+      # from_file：/data/logs/ads/access.*.log
       from_file=$fromdb/$file
-      info "scp $host:$from_file $aims_dir" '开始执行获取远程文件'
-      scp $host:$from_file $aims_dir
-      [[ $? == 0 ]] && succ "$host $from_file" '远程拷贝成功，开始删除远程文件' || { warn "$host $from_file" '远程文件未生成或无文件，不能拷贝至本地，跳过执行'; continue; }
-      # ssh后直接退出，接了 -n 后问题解决
-      ssh -n $host "rm -f $from_file"
-      [[ $? == 0 ]] && succ "$host $from_file" '远程文件删除成功' || erro "$host $from_file" '远程文件删除失败'
-
-
+      # aimsfile：/hadoop/data/ods_wefix/access.*.log
       aimsfile=$aims_dir/$file
 
-      if [[ $aimsfile =~ bi ]]; then
-        for bitype in $(grep -Po 'biType[":]+\K[^"]+' $aimsfile | sort -u); do
-          file_type=($(c_a $bitype))
-          aims_file=${file_type[0]} bi_type=${file_type[1]}
-          sed -n "/$bi_type/p" $aims_file >> $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
-          [[ $? == 0 ]] && succ "$aims_file $bi_type" '重新分配内容成功' || erro "$aims_file $bi_type" '重新分配内容失败'
-        done
-      elif [[ $aimsfile =~ access ]]; then
-        for acc_file in $aimsfile; do
-          cat $acc_file >> $(stor_data json $(p_r_r $(p_r_l $acc_file)))
-          [[ $? == 0 ]] && succ "$acc_file access" '重新分配内容成功' || erro "$acc_file access" '重新分配内容失败'
-        done
-      else
-        warn "Local_File $aimsfile" '文件不存在'
-        continue
-      fi
+      for host in $(c_a $hosts); do
+        info "scp $host:$from_file $aims_dir" '开始执行获取远程文件'
+        scp $host:$from_file $aims_dir
+        [[ $? == 0 ]] && succ "$host $from_file" '远程拷贝成功，开始删除远程文件' || { warn "$host $from_file" '远程文件未生成或无该文件，不能拷贝至本地，跳过执行'; continue; }
 
 
-      for file_time in $aimsfile; do
-        min_time_n=$(p_r_r $(p_r_l $file_time))
-        min_time_n=$(s_d -b ${min_time_n:0:8})
-        min_time=$([[ ${min_time:=$n_time} -le $min_time_n ]] && echo $min_time || echo $min_time_n)
+
+        [[ $(ls $aimsfile) == '' ]] && { warn "Local_File $aimsfile" '文件不存在，跳过执行'; continue; }
+
+        if [[ $aimsfile =~ bi ]]; then
+          for bitype in $(grep -Po 'biType[":]+\K[^"]+' $aimsfile | sort -u); do
+            file_type=($(c_a $bitype))
+            [[ ${#file_type[@]} == 1 ]] && aims_file=$aimsfile bi_type=$bitype || aims_file=${file_type[0]} bi_type=${file_type[1]}
+
+            sed -n "/$bi_type/p" $aims_file >> $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
+            [[ $? == 0 ]] && succ "$aims_file $bi_type" '重新分配内容成功' || erro "$aims_file $bi_type" '重新分配内容失败'
+          done
+        else
+          for other_file in $aimsfile; do
+            info_detail="$other_file $(p_l_l $(s_r_r $other_file))"
+            cat $other_file >> $(stor_data json $(p_r_r $(p_r_l $other_file)))
+            [[ $? == 0 ]] && succ "$info_detail" '重新分配内容成功' || erro "$info_detail" '重新分配内容失败'
+          done
+        fi
+
+        # ssh后直接退出，接了 -n 后问题解决
+        ssh -n $host "rm -f $from_file"
+        [[ $? == 0 ]] && succ "$host $from_file" '远程文件删除成功' || erro "$host $from_file" '远程文件删除失败'
+
+        # 获取时间上的最小值文件的时间
+        min_file=$(p_r_r $(p_r_l $(ls -tr $aimsfile | head -n 1)))
+        min_time=$(s_d -b ${min_file:0:8})
+
+        edit_time $min_time
+        [[ $aimsfile =~ bi ]] && {
+          edit_time $min_time t_ad_action_water
+          edit_time $min_time t_ad_query_water
+        }
+
+        rm -rf $aimsfile && info "rm -rf $aimsfile" '删除本地已经处理过的数据'
       done
-
-      rm -rf $aimsfile && info "rm -rf $aimsfile" '删除本地已经处理过的数据'
-
-      edit_time $min_time
-      [[ $aimsfile =~ bi ]] && {
-        edit_time $min_time t_ad_action_water
-        edit_time $min_time t_ad_query_water
-      }
     } &
   elif [[ $type == mysql ]]; then # MySQL类型来源
     {
@@ -108,7 +113,7 @@ while read line; do
         f_time=$(s_d -d 1 -b $(s_d ymd $f_time))
         endDate=$(s_d tt $([[ $f_time -ge $n_time ]] && echo $n_time || echo $f_time))
         # 执行sql文件并将数据写入本地存储数据的目录
-        mysql -P3306 -h${host} -u${user} -p${passwd} -D${fromdb} -s -N -e "$(sed "s/table/$(high_case $table)/; s/startDate/$startDate/g; s/endDate/$endDate/g" $extract)" >> $(stor_data tsv)
+        mysql -P3306 -h${hosts} -u${user} -p${passwd} -D${fromdb} -s -N -e "$(sed "s/table/$(high_case $table)/; s/startDate/$startDate/g; s/endDate/$endDate/g" $extract)" >> $(stor_data tsv)
         # 判断命令是否执行成功
         [[ $? == 0 ]] && succ "$dbtl" "$thdt $startDate $endDate  抽取成功" || erro "$dbtl" "$thdt $startDate $endDate  抽取失败"
       done
@@ -125,7 +130,7 @@ while read line; do
         f_time=$(s_d -d 1 -b $(s_d ymd $f_time))
         endDate=$(s_d tt $([[ $f_time -ge $n_time ]] && echo $n_time ||  echo $f_time))
         # 执行sql文件并将数据写入本地存储数据的目录
-        mongoexport --type=json -h ${host}:27017 -u ${user} -p ${passwd} -d ${fromdb} -c $(high_case $table) -q "$(sed "s/startDate/$startDate/g; s/endDate/$endDate/g" $extract)" | sed 's/{"$oid"://; s/},/,/' >> $(stor_data json)
+        mongoexport --type=json -h ${hosts}:27017 -u ${user} -p ${passwd} -d ${fromdb} -c $(high_case $table) -q "$(sed "s/startDate/$startDate/g; s/endDate/$endDate/g" $extract)" | sed 's/{"$oid"://; s/},/,/' >> $(stor_data json)
         # 判断命令是否执行成功
         [[ $? == 0 ]] && succ "$dbtl" "$thdt $startDate $endDate  抽取成功" || erro "$dbtl" "$thdt $startDate $endDate  抽取失败"
       done

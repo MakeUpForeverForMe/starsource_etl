@@ -11,8 +11,13 @@ while read line; do
 
   [[ $imex != export ]] && continue
 
-  hive_tbl
-  table=$(real_table)
+  from_db=($(u_a $fromdb))
+  execut_hql=$warehouse/${from_db[0]}/$fromdb/${table}.hql
+  [[ ! -f $execut_hql ]] && continue
+
+
+  # hive_tbl
+  table=$(truly_table)
   hive_dbtable=${fromdb}.${table}
   mysql_table=$(high_case ${table})
   mysql_file=${mysql_dir}/${table}.csv
@@ -21,9 +26,12 @@ while read line; do
   endDate=$(ymd $start_time)
 
 
+  edit_time $(trim $(sed -n "/execut/{/$table/p}" $imex_table | awk -F '|' '{print $10}'))
+
+
   hive_field=($($beeline --showHeader=false --outputformat=tsv2 --hivevar db_table=${hive_dbtable} -e 'desc ${db_table};' 2>> /dev/null | awk '{print $1}'))
 
-  mysql_field=($(mysql -P3306 -h${host} -u${user} -p${passwd} -D${aimsdb} -s -N -e "desc ${mysql_table};" | awk '{print $1}'))
+  mysql_field=($(mysql -P3306 -h${hosts} -u${user} -p${passwd} -D${aimsdb} -s -N -e "desc ${mysql_table};" | awk '{print $1}'))
 
 
   fields=''
@@ -31,7 +39,6 @@ while read line; do
     [[ ${mysql_field[@]} =~ $field ]] && fields=$(trim_m $(echo "${fields} ${field}" | sed 's/\s\+/,/g')) || continue
   done
   [[ $? == 0 ]] && succ "Fields_Filter $hive_dbtable" '过滤字段成功' || erro "Fields_Filter $hive_dbtable" '过滤字段失败'
-
 
   while [[ $startDate -le $endDate ]]; do
     ym=${startDate:0:6} dm=${startDate:6:2}
@@ -50,12 +57,11 @@ while read line; do
       continue
     } || info "LOCAL_File_${ym}${dm} $mysql_file" '文件不为空，加载数据到MySQL'
 
-    mysql -P3306 -h${host} -u${user} -p${passwd} -D${aimsdb} -e "LOAD DATA LOCAL INFILE '$mysql_file' REPLACE INTO TABLE ${mysql_table} FIELDS TERMINATED BY ',' (${fields})"
+    mysql -P3306 -h${hosts} -u${user} -p${passwd} -D${aimsdb} -e "LOAD DATA LOCAL INFILE '$mysql_file' REPLACE INTO TABLE ${mysql_table} FIELDS TERMINATED BY ',' (${fields})"
     [[ $? == 0 ]] && \
     succ "MySQL_Load_Data_${ym}${dm} From_$mysql_file" 'MySQL加载数据到表中，执行成功' || \
     erro "MySQL_Load_Data_${ym}${dm} From_$mysql_file" 'MySQL加载数据到表中，执行失败'
   done
-  edit_time
 done < $imex_table
 
 
