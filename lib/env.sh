@@ -12,6 +12,51 @@
 base_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 env_file=$base_dir/$(basename "${BASH_SOURCE[0]}")
 
+
+
+
+
+
+# ---------------===============>>>>>>>>>>>>>>>          允许修改          <<<<<<<<<<<<<<<===============--------------- #
+
+# 并行数
+p_num=20
+# HDFS主目录
+hdfs_path=/warehouse/tablespace/managed/hive
+# 本地数据存储目录
+data_direct=/hadoop/data
+# 数仓层次
+ware_level=(dm)
+# 初始化时间
+# 2019-01-01 00:00:00   2019-10-01 00:00:00   2019-11-01 00:00:00
+# init_time=1546272000  init_time=1569859200  init_time=1572537600
+init_time=1546272000
+# 删除分区距今天时长【day:30,mongth:12,year:2】
+dele_part=year:2
+# 打包限定时间
+unpack_time=1216
+
+
+# ----------==========>>>>>>>>>>          命令配置          <<<<<<<<<<==========---------- #
+# beeline命令位置
+beeline_home=beeline
+# hive用户
+beeline_user=hdfs
+# hiveServer2服务器ip
+beeline_host=spark
+# hiveServer2服务端口
+beeline_port=10000
+# jdbc远程连接url
+beeline_url=jdbc:hive2://$beeline_host:$beeline_port
+# beeline远程连接
+beeline="$beeline_home -u $beeline_url -n $beeline_user"
+
+
+
+
+
+
+
 # ---------------===============>>>>>>>>>>>>>>>          不可修改          <<<<<<<<<<<<<<<===============--------------- #
 
 # ----------==========>>>>>>>>>>          基础信息          <<<<<<<<<<==========---------- #
@@ -52,39 +97,6 @@ erro_log=${data_direct}/erro.log.${yearmonth}
 
 
 
-# ---------------===============>>>>>>>>>>>>>>>          允许修改          <<<<<<<<<<<<<<<===============--------------- #
-
-# 并行数
-p_num=20
-# HDFS主目录
-hdfs_path=/warehouse/tablespace/managed/hive
-# 本地数据存储目录
-data_direct=/hadoop/data
-# 数仓层次
-ware_level=(dm)
-# 初始化时间
-# 2019-01-01 00:00:00   2019-10-01 00:00:00   2019-11-01 00:00:00
-# init_time=1546272000  init_time=1569859200  init_time=1572537600
-init_time=1546272000
-# 删除分区距今天时长【day:30,mongth:12,year:2】
-dele_part=year:2
-# 打包限定时间
-unpack_time=1216
-
-
-# ----------==========>>>>>>>>>>          命令配置          <<<<<<<<<<==========---------- #
-# beeline命令位置
-beeline_home=beeline
-# hive用户
-beeline_user=hdfs
-# hiveServer2服务器ip
-beeline_host=spark
-# hiveServer2服务端口
-beeline_port=10000
-# jdbc远程连接url
-beeline_url=jdbc:hive2://$beeline_host:$beeline_port
-# beeline远程连接
-beeline="$beeline_home -u $beeline_url -n $beeline_user"
 
 
 

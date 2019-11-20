@@ -16,7 +16,7 @@ imex_analyze(){
   line_analyze=($(v_a "${1}"))
   imex="${line_analyze[0]}"
   type="${line_analyze[1]}"
-  host="${line_analyze[2]}"
+  hosts="${line_analyze[2]}"
   user="${line_analyze[3]}"
   passwd="${line_analyze[4]}"
   fromdb="${line_analyze[5]}"
@@ -27,11 +27,11 @@ imex_analyze(){
   partition="${line_analyze[10]}"
 }
 
-real_table(){ tbl=($(p_a "$table")); echo $(lowe_case ${tbl[0]}); }
+truly_table(){ tbl=($(p_a "$table")); echo $(lowe_case ${tbl[0]}); }
 
 hive_tbl(){
   db="$aimsdb"
-  table_hive=$(real_table)
+  real_table=$(truly_table)
   if [[ $type == local ]]; then
     file_type=json
   elif [[ $type == mongodb ]]; then
@@ -39,7 +39,7 @@ hive_tbl(){
   elif [[ $type == mysql ]]; then
     file_type=tsv
   fi
-  dttb=${db}.${table_hive}_${file_type}
+  dttb=${db}.${real_table}_${file_type}
 }
 
 
@@ -58,16 +58,14 @@ stor_data(){
 
 # 按表修改时间
 edit_time(){
-  # sed -i "/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/}" $imex_table
   sed -i "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/}}" $imex_table
-  # sed -n "/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/p}" $imex_table
+  # sed -n "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/p}}" $imex_table
   [[ $? == 0 ]] && \
   succ "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间成功' || \
   erro "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间失败'
 
-  # sed -i "/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/}" $imex_table
   sed -i "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/}}" $imex_table
-  # sed -n "/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/p}" $imex_table
+  # sed -n "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/p}}" $imex_table
   [[ $? == 0 ]] && \
   succ "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间成功' || \
   erro "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间失败'
@@ -85,14 +83,15 @@ eval_echo(){ eval echo '$'"$1"; }
 
 
 # 子参数解析(analy)
-b_a(){ echo ${1//-/ }; } # 横杠 bar       b
-c_a(){ echo ${1//:/ }; } # 冒号 colon     c
-e_a(){ echo ${1//=/ }; } # 等号 equal     e
-f_a(){ echo ${1//;/ }; } # 分号 fenhao    m
-m_a(){ echo ${1//,/ }; } # 逗号 comma     m
-p_a(){ echo ${1//./ }; } # 点   point     p
-s_a(){ echo ${1//\// }; } # 斜杠 slash    s
-v_a(){ echo ${1//|/ }; } # 竖线 vertical  v
+b_a(){ echo ${1//-/ }; } # 横杠 bar           b
+c_a(){ echo ${1//:/ }; } # 冒号 colon         c
+e_a(){ echo ${1//=/ }; } # 等号 equal         e
+f_a(){ echo ${1//;/ }; } # 分号 fenhao        m
+m_a(){ echo ${1//,/ }; } # 逗号 comma         m
+p_a(){ echo ${1//./ }; } # 点   point         p
+s_a(){ echo ${1//\// }; } # 斜杠 slash        s
+u_a(){ echo ${1//_/ }; } # 下划线 underline   u
+v_a(){ echo ${1//|/ }; } # 竖线 vertical      v
 
 
 trim(){ echo $1 | sed 's/^\s*//; s/\s*$//'; }
@@ -105,12 +104,15 @@ high_case(){ echo $1 | tr [a-z] [A-Z]; } # 大写
 
 
 # 获取字符串的某一部位
+# p：点，s：斜杠，m：逗号，u：下划线
 p_r_l(){ echo ${1%.*}; }
 p_l_r(){ echo ${1#*.}; }
 s_r_l(){ echo ${1%/*}; }
 s_l_r(){ echo ${1#*/}; }
 m_l_r(){ echo ${1#*,}; }
 m_r_l(){ echo ${1%,*}; }
+u_l_r(){ echo ${1#*_}; }
+u_r_l(){ echo ${1%_*}; }
 
 p_l_l(){ echo ${1%%.*}; }
 p_r_r(){ echo ${1##*.}; }
@@ -118,6 +120,8 @@ s_l_l(){ echo ${1%%/*}; }
 s_r_r(){ echo ${1##*/}; }
 m_l_l(){ echo ${1%%,*}; }
 m_r_r(){ echo ${1##*,}; }
+u_l_l(){ echo ${1%%_*}; }
+u_r_r(){ echo ${1##*_}; }
 
 
 # 获取文件名并拆分

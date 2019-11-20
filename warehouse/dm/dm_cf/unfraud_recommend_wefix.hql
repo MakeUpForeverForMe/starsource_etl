@@ -5,7 +5,7 @@ if(atd_black.appid is null,if(atd_device.appid is null,atd_ip.appid,atd_device.a
 blacklist,request_sum,
 device_exce,device_good,device_gene,device_diff,device_erro,
 iprate_exce,iprate_gene,iprate_diff,iprate_erro,
-${year_month},${day_of_month}
+'${year_month}','${day_of_month}'
 from
 ( select
   substring(`time`,0,8) as report_date,
