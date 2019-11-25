@@ -320,4 +320,24 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 
 
 
-echo $(( $RANDOM % 3 ))
+# echo $(( $RANDOM % 3 ))
+
+
+
+
+echo $yearmonth
+
+
+# abs_path() {
+#     # From: https://stackoverflow.com/a/246128
+#     #   - To resolve finding the directory after symlinks
+#     SOURCE="${BASH_SOURCE[0]}"
+#     while [ -h "$SOURCE" ]; do
+#         DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+#         SOURCE="$(readlink "$SOURCE")"
+#         [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+#     done
+#     echo "$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+# }
+
+

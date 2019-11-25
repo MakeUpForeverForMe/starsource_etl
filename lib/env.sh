@@ -13,10 +13,6 @@ base_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 env_file=$base_dir/$(basename "${BASH_SOURCE[0]}")
 
 
-
-
-
-
 # ---------------===============>>>>>>>>>>>>>>>          允许修改          <<<<<<<<<<<<<<<===============--------------- #
 
 # 并行数
@@ -25,6 +21,8 @@ p_num=20
 hdfs_path=/warehouse/tablespace/managed/hive
 # 本地数据存储目录
 data_direct=/hadoop/data
+# 日志目录
+log_dir=${data_direct}/logs
 # 数仓层次
 ware_level=(dm)
 # 初始化时间
@@ -81,8 +79,8 @@ mysql_dir=$data_direct/mysql
 # ----------==========>>>>>>>>>>          时间配置          <<<<<<<<<<==========---------- #
 # 当前时间/秒
 n_time=$(curr_time)
-# 当前的年月
-yearmonth=$(s_d ym $n_time)
+# 开始时间的年月
+yearmonth=$(s_d -d '-1' -f hour ym $n_time)
 # 两月之前的年月
 yearmonth_last_2=$(s_d -d '-2' -f month ym $n_time)
 # 当前的天和小时
@@ -91,9 +89,9 @@ dayhour=$(s_d dh)
 
 # ----------==========>>>>>>>>>>          日志配置          <<<<<<<<<<==========---------- #
 # info日志文件 带有当年的年月时间目录
-info_log=${data_direct}/info.log.${yearmonth}
+info_log=${log_dir}/info.log.${yearmonth}
 # erro日志文件
-erro_log=${data_direct}/erro.log.${yearmonth}
+erro_log=${log_dir}/erro.log.${yearmonth}
 
 
 
