@@ -325,8 +325,10 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 
 
 
-echo $yearmonth
+# echo $yearmonth
 
+
+# s_d h $n_time
 
 # abs_path() {
 #     # From: https://stackoverflow.com/a/246128

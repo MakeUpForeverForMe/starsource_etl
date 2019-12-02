@@ -13,15 +13,16 @@ erro_log >> $info_log &
 
 # 抽取数据
 
-sh $bin/0_add_part.sh >> $info_log
+[[ $(s_d h $n_time) == 00 ]] && sh $bin/0_add_part.sh &>> $info_log
 
-sh $bin/1_extract.sh >> $info_log
 
-sh $bin/2_load_hdfs.sh >> $info_log
+sh $bin/1_extract.sh &>> $info_log
 
-sh $bin/3_data_transform.sh >> $info_log
+sh $bin/2_load_hdfs.sh &>> $info_log
 
-sh $bin/4_export_to_mysql.sh >> $info_log
+sh $bin/3_data_transform.sh &>> $info_log
+
+sh $bin/4_export_to_mysql.sh &>> $info_log
 
 
 # 服务器测试
