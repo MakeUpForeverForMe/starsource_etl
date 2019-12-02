@@ -9,7 +9,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.exchange_info_tsv (
   `apply_app_id`    string COMMENT '申请人AppId',
   `apply_plan_id`   string COMMENT '申请人提供获客计划Id',
   `apply_adver_id`  string COMMENT '审核人申请申请人所拥有的广告位',
-  `status`          int    COMMENT '1、申请人已申请，2、审核人审核中，3、审核人审核不通过，4、审核人审核通过，5、申请人审核中，6、申请人审核不通过，7、流量交换开始，8、审核人暂停流量交换，9、申请人暂停流量交换，10、申请人停止流量交换，11、审核人停止流量交换，12、系统停止，13、申请人审核通过，999、删除',
+  `status`          int    COMMENT '1、申请人已申请，2、审核人审核中，3、审核人审核不通过，4、审核人审核通过，5、申请人审核中，6、申请人审核不通过，7、流量交换开始，8、审核人暂停流量交换，9、申请人暂停流量交换，10、申请人停止流量交换，11、审核人停止流量交换，12、系统停止，13、申请人审核通过，14、待生效（生效变为7），999、删除',
   `create_time`     string COMMENT '申请时间',
   `audit_time`      string COMMENT '审核时间',
   `apply_user_id`   string COMMENT '申请人id',

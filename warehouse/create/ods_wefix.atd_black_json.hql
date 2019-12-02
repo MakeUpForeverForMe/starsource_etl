@@ -12,3 +12,5 @@ PARTITIONED BY(year_month string COMMENT '年月',day_of_month string COMMENT '�
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
 STORED AS TEXTFILE
 LOCATION '/warehouse/tablespace/managed/hive/ods_wefix.db/atd_black_json';
+
+
