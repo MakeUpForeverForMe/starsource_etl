@@ -26,6 +26,7 @@ while read line; do
   endDate=$(ymd $start_time)
 
 
+  # 修改时间
   edit_time $(trim $(sed -n "/execut/{/$table/p}" $imex_table | awk -F '|' '{print $10}'))
 
 
