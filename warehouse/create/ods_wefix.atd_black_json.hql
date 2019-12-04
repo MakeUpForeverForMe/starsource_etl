@@ -2,10 +2,13 @@
 
 
 CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.atd_black_json(
+  `waterId` bigint COMMENT '请求流水Id',
   `time` string COMMENT '写入本地时间',
   `type` string COMMENT '设备码类型',
   `id` string COMMENT '设备id',
-  `appId` String COMMENT 'AppId',
+  `AppId` String COMMENT 'AppId',
+  `planId` bigint COMMENT '获客计划Id',
+  `status` int COMMENT '请求状态：0、租户请求WeFix，1、WeFix请求atd',
   `inBlackList` boolean COMMENT '是否在黑名单中'
 ) COMMENT '设备黑名单'
 PARTITIONED BY(year_month string COMMENT '年月',day_of_month string COMMENT '天')
