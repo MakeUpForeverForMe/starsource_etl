@@ -4,8 +4,8 @@ if(atd_black.report_date is null,if(atd_device.report_date is null,atd_ip.report
 if(atd_black.appid is null,if(atd_device.appid is null,atd_ip.appid,atd_device.appid),atd_black.appid) as appid,
 blacklist,request_sum,
 device_exce,device_good,device_gene,device_diff,device_erro,
-iprate_exce,iprate_gene,iprate_diff,iprate_erro,
-'${year_month}','${day_of_month}'
+iprate_exce,iprate_gene,iprate_diff,iprate_erro
+,'${year_month}','${day_of_month}'
 from
 ( select
   substring(`time`,0,8) as report_date,
@@ -14,7 +14,9 @@ from
   count(id) as request_sum
   from ods_wefix.atd_black_json
   where year_month = ${year_month} and day_of_month = ${day_of_month}
+  -- where year_month = 201911 and day_of_month = 29
   group by substring(`time`,0,8),appid
+  -- order by report_date
 ) as atd_black
 full join
 ( select
@@ -42,10 +44,12 @@ full join
       count(id) as quality_count_device
       from ods_wefix.atd_device_json
       where year_month = ${year_month} and day_of_month = ${day_of_month}
+      -- where year_month = 201911 and day_of_month = 29
       group by substring(`time`,0,8),appid,quality
     ) as tmp
   ) as tmp
   group by report_date,appid
+  -- order by report_date
 ) as atd_device
 on atd_black.report_date = atd_device.report_date and atd_black.appid = atd_device.appid
 full join
@@ -72,10 +76,12 @@ full join
       count(ip) as quality_count_ip
       from ods_wefix.atd_ip_json
       where year_month = ${year_month} and day_of_month = ${day_of_month}
+      -- where year_month = 201911 and day_of_month = 29
       group by substring(`time`,0,8),appid,quality
     ) as tmp
   ) as tmp
   group by report_date,appid
+  -- order by report_date
 ) as atd_ip
 on atd_black.report_date = atd_ip.report_date and atd_black.appid = atd_ip.appid
 order by report_date,appid;
