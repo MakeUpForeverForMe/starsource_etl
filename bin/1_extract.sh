@@ -73,13 +73,16 @@ while read line; do
           for bitype in $(grep -Po 'biType[":]+\K[^"]+' $aimsfile | sort -u); do
             file_type=($(c_a $bitype))
             [[ ${#file_type[@]} == 1 ]] && aims_file=$aimsfile bi_type=$bitype || aims_file=${file_type[0]} bi_type=${file_type[1]}
-            sed -n "/$bi_type/p" $aims_file | grep -vE '\s+|^$' >> $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
+            echo $aims_file $bi_type $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
+            grep "$bi_type" $aims_file >> $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
             [[ $? == 0 ]] && succ "$aims_file $bi_type" '重新分配内容成功' || { erro "$aims_file $bi_type" '重新分配内容失败'; exit 1; }
           done
         else
           for other_file in $aimsfile; do
             info_detail="$other_file $(p_l_l $(s_r_r $other_file))"
-            cat $other_file | grep -vE '\s+|^$' >> $(stor_data json $(p_r_r $(p_r_l $other_file)))
+            detail=$(grep -vE '^\s*$' $other_file)
+            [[ -n $detail ]] || { warn "$info_detail" '此文件为空，直接跳过重新分配内容'; continue; }
+            echo "$detail" >> $(stor_data json $(p_r_r $(p_r_l $other_file)))
             [[ $? == 0 ]] && succ "$info_detail" '重新分配内容成功' || { erro "$info_detail" '重新分配内容失败'; exit 1; }
           done
         fi

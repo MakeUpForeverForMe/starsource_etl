@@ -32,7 +32,7 @@ while read line; do
   [[ $table =~ bi ]] && continue
   [[ $table == TENANT ]] && table=org_info
 
-  hive_tbl
+  hive_tbl # 其中含有 file_type
   table=$real_table
 
   aims_dir=$data_direct/$aimsdb
