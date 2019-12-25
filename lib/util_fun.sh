@@ -57,20 +57,33 @@ stor_data(){
 
 
 # 按表修改时间
+# edit_time(){
+#   sed -i "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/}}" $imex_table
+#   # sed -n "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/p}}" $imex_table
+#   [[ $? == 0 ]] && \
+#   succ "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间成功' || \
+#   erro "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间失败'
+
+#   sed -i "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/}}" $imex_table
+#   # sed -n "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/p}}" $imex_table
+#   [[ $? == 0 ]] && \
+#   succ "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间成功' || \
+#   erro "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间失败'
+# }
+
 edit_time(){
-  sed -i "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/}}" $imex_table
+  sed -i "/$imex/{/$hosts/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/}}}" $imex_table
   # sed -n "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$last_time/${1:-$start_time}/p}}" $imex_table
   [[ $? == 0 ]] && \
-  succ "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间成功' || \
-  erro "${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间失败'
+  succ "${hosts}_${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间成功' || \
+  erro "${hosts}_${3:-$aimsdb}.${2:-$table} $last_time--${1:-$start_time}" '修改历史时间失败'
 
-  sed -i "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/}}" $imex_table
+  sed -i "/$imex/{/$hosts/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/}}}" $imex_table
   # sed -n "/$imex/{/${3:-$aimsdb}/{/${2:-$table}/s/$start_time/$n_time/p}}" $imex_table
   [[ $? == 0 ]] && \
-  succ "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间成功' || \
-  erro "${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间失败'
+  succ "${hosts}_${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间成功' || \
+  erro "${hosts}_${3:-$aimsdb}.${2:-$table}  $start_time--$n_time" '修改开始时间失败'
 }
-
 
 
 

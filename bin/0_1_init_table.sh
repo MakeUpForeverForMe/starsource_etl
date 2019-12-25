@@ -7,7 +7,7 @@ info 'Init Conf' '初始化执行开始'
 
 [[ ! -f $imex_table ]] && echo > $imex_table
 
-print_format='%-7s | %-8s | %-25s | %-10s | %-16s | %-20s | %-11s | %-30s | %-11s | %-11s | %s\n'
+print_format='%-7s | %-8s | %-25s | %-10s | %-16s | %-25s | %-11s | %-30s | %-11s | %-11s | %s\n'
 
 
 

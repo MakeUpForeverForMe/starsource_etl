@@ -73,7 +73,6 @@ while read line; do
           for bitype in $(grep -Po 'biType[":]+\K[^"]+' $aimsfile | sort -u); do
             file_type=($(c_a $bitype))
             [[ ${#file_type[@]} == 1 ]] && aims_file=$aimsfile bi_type=$bitype || aims_file=${file_type[0]} bi_type=${file_type[1]}
-            echo $aims_file $bi_type $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
             grep "$bi_type" $aims_file >> $(stor_data json $(p_r_r $(p_r_l $aims_file)) $bi_type)
             [[ $? == 0 ]] && succ "$aims_file $bi_type" '重新分配内容成功' || { erro "$aims_file $bi_type" '重新分配内容失败'; exit 1; }
           done
@@ -117,7 +116,7 @@ while read line; do
         # 执行sql文件并将数据写入本地存储数据的目录
         mysql -P3306 -h${hosts} -u${user} -p${passwd} -D${fromdb} -s -N -e "$(sed "s/table/$(high_case $table)/; s/startDate/$startDate/g; s/endDate/$endDate/g" $extract)" >> $(stor_data tsv)
         # 判断命令是否执行成功
-        [[ $? == 0 ]] && succ "$dbtl" "$thdt $startDate $endDate  抽取成功" || erro "$dbtl" "$thdt $startDate $endDate  抽取失败"
+        [[ $? == 0 ]] && succ "$dbtl" "$hosts $thdt $startDate $endDate  抽取成功" || erro "$dbtl" "$hosts $thdt $startDate $endDate  抽取失败"
       done
       edit_time
     } &
