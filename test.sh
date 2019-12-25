@@ -343,3 +343,37 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 # }
 
 
+# ~/mysql-5.7.28/bin/mysql -P3306 -hmysql22 -uroot -p'INikGPLun*8v' -Dmicrob
+
+
+# mysql="mysql -P3306 -hmysql22 -uroot -pINikGPLun*8v -Dmicrob"
+
+# ymd(){ date -d "$1 day" +%Y%m%d; }
+
+# dt=$(ymd '-2')
+
+# uid=$($mysql -N -s -e "select login_userId from ADT_DATA where date(report_date) = $dt;")
+
+# uids=$($mysql -N -s -e "select login_userId from ADT_DATA where date(report_date) = $(ymd '-2');")
+
+# [[ -z $uid ]] && {
+#   for uid in $uids; do
+#     $mysql -e "insert into ADT_DATA(report_date,login_userId,login_advId,viewer_advId) values($dt,'$uid','','');"
+#   done
+# } || echo '非空'
+
+
+
+# s=(1 2 3 4)
+# echo ${s[@]}
+# a=(4 5 6 3)
+# echo ${a[@]}
+
+# for i in ${a[@]}; do
+#   [[ ${s[@]} =~ $i ]] && echo true || echo false
+#   echo "${s[@]}" | grep -wi $i
+#   echo $?
+# done
+
+
+
