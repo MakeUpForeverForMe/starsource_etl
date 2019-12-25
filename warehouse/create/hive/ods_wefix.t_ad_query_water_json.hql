@@ -1,4 +1,4 @@
--- DROP TABLE IF EXISTS ods_wefix.t_ad_query_water_json;
+DROP TABLE IF EXISTS ods_wefix.t_ad_query_water_json;
 
 
 CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.t_ad_query_water_json(

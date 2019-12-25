@@ -15,7 +15,9 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.t_ad_action_water_json(
   exTagId String COMMENT '交换方广告id',
   display int COMMENT '是否展示：1-展示0、-未展示',
   isClick int COMMENT '是否点击',
-  skip int COMMENT '跳过模式：0-没有任何行为、1-人为点击跳过'
+  skip int COMMENT '跳过模式：0-没有任何行为、1-人为点击跳过',
+  code string COMMENT '',
+  message  string COMMENT ''
 ) COMMENT '展示点击流水表'
 PARTITIONED BY(year_month string COMMENT '年月',day_of_month string COMMENT '天')
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'

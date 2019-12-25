@@ -1,9 +1,9 @@
--- DROP TABLE IF EXISTS dm_cf.unfraud_recommend_wefix;
+DROP TABLE IF EXISTS dm_cf.unfraud_recommend_wefix;
 
 
 CREATE TABLE IF NOT EXISTS dm_cf.unfraud_recommend_wefix(
   `report_date` string  COMMENT '报告日期',
-  `app_id`      string  COMMENT 'AppId',
+  `app_name`    string  COMMENT '应用名称',
   `blacklist`   int     COMMENT '进入黑名单的数量',
   `request_sum` int     COMMENT '合计请求数',
   `device_exce` int     COMMENT '设备评级数(优)',
