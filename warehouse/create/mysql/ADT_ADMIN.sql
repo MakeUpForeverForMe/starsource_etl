@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `ADT_ADMIN` (
   `status_b`        int(11)     DEFAULT NULL                COMMENT '黑名单请求状态',
   `flevel_b`        varchar(64) DEFAULT NULL                COMMENT '黑名单拦截级别',
   `fstatus_b`       int(11)     DEFAULT NULL                COMMENT '黑名单拦截状态',
-  `inblacklist`     boolean     DEFAULT NULL                COMMENT '黑名单风险程度',
+  `inblacklist`     varchar(64) DEFAULT NULL                COMMENT '黑名单风险程度',
   `cnt_b`           int(11)     DEFAULT NULL                COMMENT '黑名单拦截数',
   `status_d`        int(11)     DEFAULT NULL                COMMENT '设备请求状态',
   `flevel_d`        varchar(64) DEFAULT NULL                COMMENT '设备拦截级别',
