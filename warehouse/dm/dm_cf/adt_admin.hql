@@ -2,11 +2,10 @@ with base as (
   select
   report_date,
   waterid,
-  if(exchange_info.apply_app_id = appid,exchange_info.audit_user_id,exchange_info.apply_user_id)    as  login_userid,
-  if(exchange_info.apply_app_id = appid,exchange_info.audit_app_id,exchange_info.apply_app_id)      as  login_appid,
-  if(exchange_info.apply_app_id = appid,exchange_info.audit_adver_id,exchange_info.apply_adver_id)  as  login_advid,
-  if(exchange_info.apply_app_id = appid,exchange_info.apply_app_id,exchange_info.audit_app_id)      as  viewer_appid,
-  if(exchange_info.apply_app_id = appid,exchange_info.apply_adver_id,exchange_info.audit_adver_id)  as  viewer_advid,
+  if(exchange_info.apply_app_id = appid,app_audit.app_name,app_apply.app_name)  as  login_appname,
+  if(exchange_info.apply_app_id = appid,adv_audit.adv_name,adv_apply.adv_name)  as  login_advname,
+  if(exchange_info.apply_app_id = appid,app_apply.app_name,app_audit.app_name)  as  viewer_appname,
+  if(exchange_info.apply_app_id = appid,adv_apply.adv_name,adv_audit.adv_name)  as  viewer_advname,
   device_type,
   device_id,
   status_b,
@@ -60,27 +59,40 @@ with base as (
     ) as atd_ip on (atd_black.waterid = atd_ip.waterid and atd_black.appid = atd_ip.appid and atd_black.exid = atd_ip.exid)
       or (atd_device.waterid = atd_ip.waterid and atd_device.appid = atd_ip.appid and atd_device.exid = atd_ip.exid)
   ) as adt
-  left join (select distinct exchange_id,
-      audit_adver_id,audit_plan_id,audit_app_id,audit_user_id,apply_adver_id,apply_plan_id,apply_app_id,apply_user_id
+  left join (select distinct exchange_id,audit_adver_id,audit_plan_id,audit_app_id,audit_user_id,apply_adver_id,apply_plan_id,apply_app_id,apply_user_id
     from ods_wefix.exchange_info_tsv
     where audit_app_id != 'null' and audit_user_id != 'null' and apply_app_id != 'null' and apply_user_id != 'null' and status > 6
   ) as exchange_info on adt.exid = exchange_info.exchange_id
+  left join (select distinct app_id,app_name from ods_wefix.app_info_tsv) as app_audit on exchange_info.audit_app_id = app_audit.app_id
+  left join (select distinct app_id,app_name from ods_wefix.app_info_tsv) as app_apply on exchange_info.apply_app_id = app_apply.app_id
+  left join (select distinct advertise_id,advertise_name as adv_name from ods_wefix.advertisement_info_tsv) as adv_audit on exchange_info.audit_adver_id = adv_audit.advertise_id
+  left join (select distinct advertise_id,advertise_name as adv_name from ods_wefix.advertisement_info_tsv) as adv_apply on exchange_info.apply_adver_id = adv_apply.advertise_id
 )
-INSERT OVERWRITE TABLE dm_cf.adt_data PARTITION(year_month,day_of_month)
-select
-  report_date,
-  login_userid,
-  login_appid,
-  login_advid,
-  viewer_appid,
-  viewer_advid,
-  count(waterid) as  req_sum,
-  sum(if(fstatus_b = 1 and fstatus_d != 1 and fstatus_i != 1,1,0))  as  blacklist_sum,
-  sum(if(fstatus_b != 1 and fstatus_d = 1 and fstatus_i != 1,1,0))  as  sus_device_sum,
-  sum(if(fstatus_b != 1 and fstatus_d != 1 and fstatus_i = 1,1,0))  as  sus_ip_sum,
-  sum(if(fstatus_b = 1 and fstatus_d = 1 and fstatus_i != 1,1,0))   as  bl_device_sum,
-  sum(if(fstatus_b = 1 and fstatus_d != 1 and fstatus_i = 1,1,0))   as  bl_ip_sum,
-  sum(if(fstatus_b != 1 and fstatus_d = 1 and fstatus_i = 1,1,0))   as  dvi_ip_sum,
-  sum(if(fstatus_b = 1 and fstatus_d = 1 and fstatus_i = 1,1,0))    as  bl_dvi_ip_sum
-  ,'${year_month}','${day_of_month}'
-from base group by report_date,login_userid,login_appid,login_advid,viewer_appid,viewer_advid;
+INSERT OVERWRITE TABLE dm_cf.adt_admin PARTITION(year_month,day_of_month)
+SELECT distinct
+report_date,
+login_appname,
+login_advname,
+viewer_appname,
+viewer_advname,
+status_b,
+flevel_b,
+fstatus_b,
+inblacklist,
+count(if(fstatus_b is null,null,waterid)) over(partition by report_date,login_appname,login_advname,viewer_appname,viewer_advname,status_b,flevel_b,fstatus_b,inblacklist
+) as cnt_b,
+status_d,
+flevel_d,
+fstatus_d,
+quality_d,
+count(if(fstatus_d is null,null,waterid)) over(partition by report_date,login_appname,login_advname,viewer_appname,viewer_advname,status_d,flevel_d,fstatus_d,quality_d
+) as cnt_d,
+status_i,
+flevel_i,
+fstatus_i,
+quality_i,
+count(if(fstatus_i is null,null,waterid)) over(partition by report_date,login_appname,login_advname,viewer_appname,viewer_advname,status_i,flevel_i,fstatus_i,quality_i
+) as cnt_i
+,'${year_month}','${day_of_month}'
+from base
+;
