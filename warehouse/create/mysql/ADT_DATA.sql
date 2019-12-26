@@ -19,4 +19,4 @@ CREATE TABLE IF NOT EXISTS `ADT_DATA` (
   `bl_dvi_ip_sum`   int(11)     DEFAULT 0                   COMMENT '黑名单&可疑设备&可疑IP数量',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unity_index` (`report_date`,`login_userId`,`login_advId`,`viewer_advId`) USING BTREE COMMENT '唯一索引，用于去重'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8 COMMENT '反欺诈用户数据概览';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '反欺诈用户数据概览';

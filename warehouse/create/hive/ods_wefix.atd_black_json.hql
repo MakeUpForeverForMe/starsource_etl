@@ -11,7 +11,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.atd_black_json(
   `planId`      bigint    COMMENT '获客计划Id',
   `status`      int       COMMENT '请求状态：0、租户请求WeFix但不请求TD，1、租户请求WeFix但请求TD',
   `fLevel`      string    COMMENT '拦截级别',
-  `fStatus`     bigint    COMMENT '0、通过，1、已拦截',
+  `fStatus`     int       COMMENT '0、通过，1、已拦截',
   `inBlackList` boolean   COMMENT '是否在黑名单中',
   `tdCode`      int       COMMENT '请求结果状态码'
 ) COMMENT '设备黑名单'
