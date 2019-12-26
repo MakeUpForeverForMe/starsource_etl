@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS `ADT_ADMIN` (
   `quality_i`       varchar(64) DEFAULT NULL                COMMENT '网段风险程度',
   `cnt_i`           int(11)     DEFAULT NULL                COMMENT '网段拦截数',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unity_index` (`report_date`,`login_advname`,`viewer_advname`) USING BTREE COMMENT '唯一索引，用于去重'
+  UNIQUE KEY `unity_index` (`report_date`,`login_advname`,`viewer_advname`,`status_b`,`flevel_b`,`fstatus_b`,`inblacklist`,`status_d`,`flevel_d`,`fstatus_d`,`quality_d`,`status_i`,`flevel_i`,`fstatus_i`,`quality_i`) USING BTREE COMMENT '唯一索引，用于去重'
 ) ENGINE=MyIsam   AUTO_INCREMENT=1  DEFAULT CHARSET=utf8  COMMENT 'WeFix反欺诈管理员表';
