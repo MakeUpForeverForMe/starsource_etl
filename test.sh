@@ -376,4 +376,12 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 # done
 
 
+dirs=~/starsource,~/starsource/bin,~/starsource/code/lib,~/starsource/code/conf
+
+
+for dir in ${dirs//,/ }; do
+  cd $dir
+  pwd
+  # echo $dir
+done
 
