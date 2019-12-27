@@ -375,13 +375,13 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 #   echo $?
 # done
 
+dir_home=/home/hdfs/starsource
 
-dirs=~/starsource,~/starsource/bin,~/starsource/code/lib,~/starsource/code/conf
-
+dirs=.,bin,lib,conf
 
 for dir in ${dirs//,/ }; do
-  cd $dir
-  pwd
-  # echo $dir
+  cd $dir_home/$dir
+  # 将数据输出到标准错误输出中
+  pwd >&2
 done
 
