@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `ADT_ADMIN`;
 CREATE TABLE IF NOT EXISTS `ADT_ADMIN` (
   `id`              int(11)     NOT     NULL AUTO_INCREMENT COMMENT '主键',
   `create_time`     datetime    DEFAULT CURRENT_TIMESTAMP() COMMENT '插入数据时间(2020-01-01 00:00:00)',
-  `report_date`     varchar(8)  DEFAULT NULL                COMMENT '拦截日期',
+  `report_date`     date        DEFAULT NULL                COMMENT '拦截日期',
   `login_appname`   varchar(64) DEFAULT NULL                COMMENT '登陆者应用',
   `login_advname`   varchar(64) DEFAULT NULL                COMMENT '登陆者广告位',
   `viewer_appname`  varchar(64) DEFAULT NULL                COMMENT '展示者应用',
