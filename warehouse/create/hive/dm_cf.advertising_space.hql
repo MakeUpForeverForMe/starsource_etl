@@ -1,7 +1,6 @@
 DROP TABLE IF EXISTS dm_cf.advertising_space;
 
 CREATE TABLE IF NOT EXISTS dm_cf.advertising_space (
-  `create_date`   string  COMMENT '插入日期',
   `report_date`   string  COMMENT '报告日期',
   `plan_user_id`  string  COMMENT '获客计划对应的用户id',
   `plan_app_id`   string  COMMENT '获客计划对应的AppID',
@@ -15,6 +14,7 @@ CREATE TABLE IF NOT EXISTS dm_cf.advertising_space (
   `adv_iss_num`   int     COMMENT '广告下发数',
   `iss_req_rate`  double  COMMENT '下发数与请求数比值',
   `adv_show_num`  int     COMMENT '广告展示数',
+  `adv_show_fail` int     COMMENT '上报超时数',
   `show_iss_rate` double  COMMENT '展示数与下发数比值',
   `adv_cli_num`   int     COMMENT '广告点击数',
   `cli_show_rate` double  COMMENT '点击数与展示数比值'
