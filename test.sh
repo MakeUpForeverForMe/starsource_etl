@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. /home/hdfs/starsource/lib/env.sh
+# . /home/hdfs/starsource/lib/env.sh
+. $(dirname "${BASH_SOURCE[0]}")/lib/env.sh
 
 test_arg='1:2:3:4'
 
@@ -375,13 +376,23 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 #   echo $?
 # done
 
-dir_home=/home/hdfs/starsource
+# dir_home=/home/hdfs/starsource
 
-dirs=.,bin,lib,conf
+# dirs=.,bin,lib,conf
 
-for dir in ${dirs//,/ }; do
-  cd $dir_home/$dir
-  # 将数据输出到标准错误输出中
-  pwd >&2
-done
+# for dir in ${dirs//,/ }; do
+#   cd $dir_home/$dir
+#   # 将数据输出到标准错误输出中
+#   pwd >&2
+# done
+
+
+# printf '%180s\n' | sed 's/ /-/g'
+
+# prt(){ printf "\n\n%$2s\n" | sed "s/ /$1/g"; }
+
+# prt '-' '120'
+# prt '成功' '30'
+
+
 
