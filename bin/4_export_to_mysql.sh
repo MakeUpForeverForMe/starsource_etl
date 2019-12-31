@@ -55,7 +55,7 @@ while read line; do
       $beeline --showHeader=false --outputformat=csv2 \
       --hivevar tbl_fields=${fields} --hivevar db_table=${hive_dbtable} \
       --hivevar year_month=$ym --hivevar day_of_month=$dm \
-      -e 'select ${tbl_fields} from ${db_table} where year_month = ${year_month} and day_of_month = ${day_of_month}' > $mysql_file
+      -e 'select ${tbl_fields} from ${db_table} where year_month = ${year_month} and day_of_month = ${day_of_month}' | sed '/^[0-9]\{14\},NULL/d' > $mysql_file
       [[ $? == 0 ]] && \
       succ "Extract_Hive_${ym}${dm} $hive_dbtable" '抽取Hive数据到本地成功' || \
       erro "Extract_Hive_${ym}${dm} $hive_dbtable" '抽取Hive数据到本地失败'
