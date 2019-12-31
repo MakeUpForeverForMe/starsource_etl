@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS dm_cf.advertising_space;
 
 CREATE TABLE IF NOT EXISTS dm_cf.advertising_space (
+  `create_date`   string  COMMENT '插入日期',
   `report_date`   string  COMMENT '报告日期',
   `plan_user_id`  string  COMMENT '获客计划对应的用户id',
   `plan_app_id`   string  COMMENT '获客计划对应的AppID',

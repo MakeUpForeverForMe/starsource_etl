@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS ADVERTISING_SPACE;
 
 CREATE TABLE IF NOT EXISTS `ADVERTISING_SPACE` (
   `id`            bigint(20)  NOT NULL AUTO_INCREMENT     COMMENT '主键',
-  `create_time`   datetime    DEFAULT CURRENT_TIMESTAMP() COMMENT '插入数据时间(2020-01-01 00:00:00)',
+  `create_date`   varchar(16) NOT NULL                    COMMENT '插入日期',
   `report_date`   varchar(8)  NOT NULL                    COMMENT '报告日期',
   `plan_user_id`  varchar(64) DEFAULT NULL                COMMENT '获客计划对应的用户id',
   `plan_app_id`   varchar(64) DEFAULT NULL                COMMENT '获客计划对应的AppID',

@@ -1,3 +1,7 @@
+set hivevar:year_month=201912;
+
+set hivevar:day_of_month=30;
+
 with base as (
   select
   query_water.id                                                                            as id,
@@ -56,26 +60,27 @@ with base as (
     select distinct app_id,user_id from ods_wefix.app_info_tsv
   ) as app_info on adv_info.app_id = app_info.app_id
 )
-INSERT OVERWRITE TABLE dm_cf.advertising_space PARTITION(year_month,day_of_month)
+-- INSERT OVERWRITE TABLE dm_cf.advertising_space PARTITION(year_month,day_of_month)
 select
-req.report_date                             as report_date,
-req.plan_user_id                            as plan_user_id,
-req.plan_app_id                             as plan_app_id,
-req.plan_id                                 as plan_id,
-req.plan_adv_id                             as plan_adv_id,
-req.adv_user_id                             as adv_user_id,
-req.adv_app_id                              as adv_app_id,
-req.adv_id                                  as adv_id,
-req.ad_type                                 as ad_type,
-if(adv_req_num is null,0,adv_req_num)       as adv_req_num,
-if(adv_iss_num is null,0,adv_iss_num)       as adv_iss_num,
-cast(if(if(adv_req_num is null, 0, adv_req_num) = 0,0,if(adv_iss_num  is null,0, adv_iss_num)/adv_req_num) as decimal(13,5)) as iss_req_rate,
-if(adv_show_num is null,0,adv_show_num)     as adv_show_num,
-if(adv_show_fail is null,0,adv_show_fail)   as adv_show_fail,
-cast(if(if(adv_iss_num is null, 0, adv_iss_num) = 0,0,if(adv_show_num is null,0,adv_show_num)/adv_iss_num) as decimal(13,5)) as show_iss_rate,
-if(adv_cli_num is null,0,adv_cli_num)       as adv_cli_num,
-cast(if(if(adv_show_num is null,0,adv_show_num) = 0,0,if(adv_cli_num  is null,0,adv_cli_num)/adv_show_num) as decimal(13,5)) as cli_show_rate
-,'${year_month}'  as  year_month,'${day_of_month}'  as  day_of_month
+  -- date_format(from_utc_timestamp(current_timestamp,'GMT+8'),'yyyyMMddHHmmss') as create_date,
+  req.report_date                                                             as report_date,
+  req.plan_user_id                                                            as plan_user_id,
+  req.plan_app_id                                                             as plan_app_id,
+  req.plan_id                                                                 as plan_id,
+  req.plan_adv_id                                                             as plan_adv_id,
+  req.adv_user_id                                                             as adv_user_id,
+  req.adv_app_id                                                              as adv_app_id,
+  req.adv_id                                                                  as adv_id,
+  req.ad_type                                                                 as ad_type,
+  if(adv_req_num is null,0,adv_req_num)                                       as adv_req_num,
+  if(adv_iss_num is null,0,adv_iss_num)                                       as adv_iss_num,
+  cast(if(if(adv_req_num is null, 0, adv_req_num) = 0,0,if(adv_iss_num  is null,0, adv_iss_num)/adv_req_num) as decimal(13,5)) as iss_req_rate,
+  if(adv_show_num is null,0,adv_show_num)                                     as adv_show_num,
+  if(adv_show_fail is null,0,adv_show_fail)                                   as adv_show_fail,
+  cast(if(if(adv_iss_num is null, 0, adv_iss_num) = 0,0,if(adv_show_num is null,0,adv_show_num)/adv_iss_num) as decimal(13,5)) as show_iss_rate,
+  if(adv_cli_num is null,0,adv_cli_num)                                       as adv_cli_num,
+  cast(if(if(adv_show_num is null,0,adv_show_num) = 0,0,if(adv_cli_num  is null,0,adv_cli_num)/adv_show_num) as decimal(13,5)) as cli_show_rate
+  -- ,'${year_month}'  as  year_month,'${day_of_month}'  as  day_of_month
 from (
   select report_date,plan_user_id,plan_app_id,plan_id,plan_adv_id,adv_user_id,adv_app_id,adv_id,ad_type,
   count(distinct id) as adv_req_num
