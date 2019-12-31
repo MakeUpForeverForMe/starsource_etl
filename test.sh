@@ -389,9 +389,9 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 
 # printf '%180s\n' | sed 's/ /-/g'
 
-prt(){ printf "\n\n%$2s\n" | sed "s/ /$1/g"; }
+# prt(){ printf "\n\n%$2s\n" | sed "s/ /$1/g"; }
 
-prt '-' 120
+# prt '-' 120
 # prt '成功' '30'
 
 
