@@ -1,7 +1,3 @@
-set hivevar:year_month=201912;
-
-set hivevar:day_of_month=30;
-
 with base as (
   select
   query_water.id                                                                            as id,
@@ -38,9 +34,17 @@ with base as (
     where year_month = '${year_month}' and day_of_month = '${day_of_month}' and (test = 0 or test is null)
   ) as query_water
   left join (
-    select distinct waterid,createtime,status,display,isclick,year_month,day_of_month from ods_wefix.t_ad_action_water_json
+    SELECT t1.waterid as waterid,createtime,status,display,if(isclick is null,0,isclick) as isclick,t1.year_month as year_month,t1.day_of_month as day_of_month
+    from (
+      select distinct waterid,createtime,status,display,year_month,day_of_month from ods_wefix.t_ad_action_water_json
+      WHERE display = 1
+    ) as t1
+    left join (
+      select distinct waterid,isclick,year_month,day_of_month from ods_wefix.t_ad_action_water_json
+      WHERE display = 0
+    ) as t2 on t1.waterid = t2.waterid AND t1.year_month = t2.year_month AND t1.day_of_month = t2.day_of_month
   ) as action_water
-  on query_water.id = action_water.waterid
+  on query_water.id = action_water.waterid AND query_water.year_month = action_water.year_month AND query_water.day_of_month = action_water.day_of_month
   left join (
     select distinct exchange_id,
     audit_adver_id,audit_plan_id,audit_app_id,audit_user_id,
@@ -60,9 +64,9 @@ with base as (
     select distinct app_id,user_id from ods_wefix.app_info_tsv
   ) as app_info on adv_info.app_id = app_info.app_id
 )
--- INSERT OVERWRITE TABLE dm_cf.advertising_space PARTITION(year_month,day_of_month)
+INSERT OVERWRITE TABLE dm_cf.advertising_space PARTITION(year_month,day_of_month)
 select
-  -- date_format(from_utc_timestamp(current_timestamp,'GMT+8'),'yyyyMMddHHmmss') as create_date,
+  date_format(from_utc_timestamp(current_timestamp,'GMT+8'),'yyyyMMddHHmmss') as create_date,
   req.report_date                                                             as report_date,
   req.plan_user_id                                                            as plan_user_id,
   req.plan_app_id                                                             as plan_app_id,
@@ -79,8 +83,9 @@ select
   if(adv_show_fail is null,0,adv_show_fail)                                   as adv_show_fail,
   cast(if(if(adv_iss_num is null, 0, adv_iss_num) = 0,0,if(adv_show_num is null,0,adv_show_num)/adv_iss_num) as decimal(13,5)) as show_iss_rate,
   if(adv_cli_num is null,0,adv_cli_num)                                       as adv_cli_num,
+  if(adv_cli_fail is null,0,adv_cli_fail)                                     as adv_cli_fail,
   cast(if(if(adv_show_num is null,0,adv_show_num) = 0,0,if(adv_cli_num  is null,0,adv_cli_num)/adv_show_num) as decimal(13,5)) as cli_show_rate
-  -- ,'${year_month}'  as  year_month,'${day_of_month}'  as  day_of_month
+  ,'${year_month}'  as  year_month,'${day_of_month}'  as  day_of_month
 from (
   select report_date,plan_user_id,plan_app_id,plan_id,plan_adv_id,adv_user_id,adv_app_id,adv_id,ad_type,
   count(distinct id) as adv_req_num
@@ -102,7 +107,8 @@ left join (
   select report_date,plan_user_id,plan_app_id,plan_id,plan_adv_id,adv_user_id,adv_app_id,adv_id,ad_type,
   count(distinct if(report_status = 0 and action_display = 1,id,null)) as adv_show_num,
   count(distinct if(report_status = 1 and action_display = 1,id,null)) as adv_show_fail,
-  count(distinct if(action_isclick = 1,id,null)) as adv_cli_num
+  count(distinct if(report_status = 0 and action_isclick = 1,id,null)) as adv_cli_num,
+  count(distinct if(report_status = 1 and action_isclick = 1,id,null)) as adv_cli_fail
   from base where req_type = 'action'
   group by report_date,plan_user_id,plan_app_id,plan_id,plan_adv_id,adv_user_id,adv_app_id,adv_id,ad_type
 ) as show_cli
