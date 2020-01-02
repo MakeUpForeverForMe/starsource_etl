@@ -15,9 +15,10 @@ CREATE TABLE IF NOT EXISTS dm_cf.advertising_space (
   `adv_iss_num`   int     COMMENT '广告下发数',
   `iss_req_rate`  double  COMMENT '下发数与请求数比值',
   `adv_show_num`  int     COMMENT '广告展示数',
-  `adv_show_fail` int     COMMENT '上报超时数',
+  `adv_show_fail` int     COMMENT '展示超时数',
   `show_iss_rate` double  COMMENT '展示数与下发数比值',
   `adv_cli_num`   int     COMMENT '广告点击数',
+  `adv_cli_fail`  int     COMMENT '点击超时数',
   `cli_show_rate` double  COMMENT '点击数与展示数比值'
 ) COMMENT 'WeFix置换交易数据概览'
 PARTITIONED BY(year_month string COMMENT '年月',day_of_month string COMMENT '天')
