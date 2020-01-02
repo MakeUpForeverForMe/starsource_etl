@@ -16,9 +16,10 @@ CREATE TABLE IF NOT EXISTS `ADVERTISING_SPACE` (
   `adv_iss_num`   int(11)     DEFAULT 0                   COMMENT '广告下发数',
   `iss_req_rate`  double      DEFAULT 0                   COMMENT '下发数与请求数比值',
   `adv_show_num`  int(11)     DEFAULT 0                   COMMENT '广告展示数',
-  `adv_show_fail` int(11)     DEFAULT 0                   COMMENT '上报超时数',
+  `adv_show_fail` int(11)     DEFAULT 0                   COMMENT '展示超时数',
   `show_iss_rate` double      DEFAULT 0                   COMMENT '展示数与下发数比值',
   `adv_cli_num`   int(11)     DEFAULT 0                   COMMENT '广告点击数',
+  `adv_cli_fail`  int(11)     DEFAULT 0                   COMMENT '点击超时数',
   `cli_show_rate` double      DEFAULT 0                   COMMENT '点击数与展示数比值',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unity_index` (`report_date`,`plan_user_id`,`adv_user_id`,`plan_id`,`adv_id`,`plan_adv_id`) USING BTREE  COMMENT '唯一索引，用于去重'
