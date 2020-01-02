@@ -12,8 +12,8 @@ from (
     select substring(createtime,1,8) as report_date,sourceid,count(distinct waterid) as change_cnt
     from ods_wefix.t_ad_action_water_json
     where display = 1 and (status = 0 or status is null)
-    and year_month = '${year_month}' and day_of_month = '${day_of_month}'
-    -- and year_month = '202001' and day_of_month = '02'
+    -- and year_month = '${year_month}' and day_of_month = '${day_of_month}'
+    and year_month = '202001' and day_of_month = '02'
     group by substring(createtime,1,8),sourceid
   ) as action_water
   left join (
