@@ -2,7 +2,7 @@
 
 
 CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.app_info_tsv(
-  `app_id`        string  COMMENT '用户Id',
+  `app_id`        string  COMMENT '应用Id',
   `app_name`      string  COMMENT '应用名称',
   `flow_id`       string  COMMENT '流量方',
   `system`        string  COMMENT '操作系统',
@@ -17,7 +17,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.app_info_tsv(
   `description`   string  COMMENT '描述',
   `create_time`   string  COMMENT '创建时间',
   `update_time`   string  COMMENT '修改时间',
-  `status`        int     COMMENT '状态:  1上线  2 下线  3 审核中',
+  `status`        int     COMMENT '状态:  1 上线  2 下线  3 审核中  999 删除',
   `online_time`   string  COMMENT '上线时间',
   `outline_time`  string  COMMENT '下线时间',
   `user_id`       string  COMMENT '用户Id',
