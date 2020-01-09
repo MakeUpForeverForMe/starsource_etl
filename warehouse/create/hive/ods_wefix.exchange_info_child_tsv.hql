@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS ods_wefix.exchange_info_child_tsv;
 
 
-CREATE TABLE IF NOT EXISTS ods_wefix.exchange_info_child_tsv (
+CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.exchange_info_child_tsv (
   `exchange_child_id`   int     COMMENT '子交换信息id',
   `audit_app_id`        string  COMMENT '审核人AppId',
   `audit_adver_id`      string  COMMENT '申请人申请审核人所拥有的广告位Id',

@@ -41,6 +41,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.t_ad_query_water_json(
   productId         int     COMMENT '产品Id',
   sproductId        string  COMMENT '产品Id',
   `test`            int     COMMENT '是否为测试用数据：1、测试，0、正常数据',
+  `mockId`          bigint  COMMENT '假接口标志字段',
   ext               string  COMMENT '扩展字段'
 ) COMMENT '请求下发流水表'
 PARTITIONED BY(year_month string COMMENT '年月',day_of_month string COMMENT '天')
