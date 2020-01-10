@@ -1,4 +1,4 @@
--- DROP TABLE IF EXISTS dm_cf.dm_user_info;
+DROP TABLE IF EXISTS dm_cf.dm_user_info;
 
 
 CREATE TABLE IF NOT EXISTS dm_cf.dm_user_info(

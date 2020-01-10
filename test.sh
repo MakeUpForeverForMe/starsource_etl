@@ -396,3 +396,35 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 
 
 
+
+
+
+OPTIND=1
+while getopts :e:m:s:t: opt; do
+  case $opt in
+    (e) etime="$OPTARG" ;;
+    (s) stime="$OPTARG" ;;
+    (m) p_num="$OPTARG" ;;
+    (t) info_type="$OPTARG" ;;
+    (:) echo "请添加参数: -$OPTARG" ;;
+    (?) echo "选项未设置: -$OPTARG" ;;
+    (*) echo "未知情况" ;;
+  esac
+done
+[[ $stime -lt $etime ]] && ftime=$stime stime=$etime etime=$ftime
+for (( ftime = ${stime:=$(date +%Y%m%d)}; ftime >= ${etime:=20190101}; ftime=$(date -d "-1 day $ftime" +%Y%m%d) )); do
+  year_month=${ftime:0:6}   day_of_month=${ftime:6:2}
+  sql+="
+  ALTER TABLE ods_wefix.atd_black_json DROP IF EXISTS PARTITION (year_month='${year_month}',day_of_month='${day_of_month}');
+  ALTER TABLE ods_wefix.atd_black_json ADD IF NOT EXISTS PARTITION (year_month='${year_month}',day_of_month='${day_of_month}');
+  "
+  d_diff=$(( ($(date -d $stime +%s) - $(date -d $ftime +%s)) / 86400 ))
+  [[ ($d_diff != 0 && $(( $d_diff % ${p_num:-150} )) == 0) || $ftime == $etime ]] || continue
+  beeline -u jdbc:hive2://spark:10000 -n hdfs -e "${sql}"
+  unset sql
+done
+
+
+
+
+

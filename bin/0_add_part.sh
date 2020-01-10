@@ -34,7 +34,11 @@ while read line; do
       # 必须放在其他日期计算的后面
       f_time=$(diff_day $f_time)
 
-      add_part+="ALTER TABLE ${dttb} DROP IF EXISTS PARTITION (year_month='${ym_add}',day_of_month='${dm_add}'); ALTER TABLE ${dttb} ADD IF NOT EXISTS PARTITION (year_month='${ym_add}',day_of_month='${dm_add}'); ALTER TABLE ${dttb} DROP IF EXISTS PARTITION (year_month='${ym_del}',day_of_month='${dm_del}');"
+      add_part+="
+      ALTER TABLE ${dttb} DROP IF EXISTS PARTITION (year_month='${ym_add}',day_of_month='${dm_add}');
+      ALTER TABLE ${dttb} ADD IF NOT EXISTS PARTITION (year_month='${ym_add}',day_of_month='${dm_add}');
+      ALTER TABLE ${dttb} DROP IF EXISTS PARTITION (year_month='${ym_del}',day_of_month='${dm_del}');
+      "
 
     done
     detail_info_beeline=$(printf '%30s %15s' ${dttb} AddPartition_And_DeletePartition)
