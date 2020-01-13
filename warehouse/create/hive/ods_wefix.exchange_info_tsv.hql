@@ -1,4 +1,4 @@
--- DROP TABLE IF EXISTS ods_wefix.exchange_info_tsv;
+DROP TABLE IF EXISTS ods_wefix.exchange_info_tsv;
 
 
 CREATE EXTERNAL TABLE IF NOT EXISTS ods_wefix.exchange_info_tsv (

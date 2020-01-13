@@ -66,7 +66,6 @@ while read line; do
         [[ $? == 0 ]] && succ "$host $from_file" '远程拷贝成功，开始删除远程文件' || { warn "$host $from_file" '远程文件未生成或无该文件，不能拷贝至本地，跳过执行'; continue; }
 
 
-
         [[ $(ls $aimsfile) == '' ]] && { warn "Local_File $aimsfile" '文件不存在，跳过执行'; continue; }
 
         if [[ $aimsfile =~ bi ]]; then
