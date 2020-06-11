@@ -47,7 +47,7 @@ for line in $(grep -vE '^#|^$' $conf/imex.conf); do
     # start_time  任务开始时间
     # last_time   上次任务时间
     # partition   记录分区时间字段（默认为：20190101）
-    printf "$print_format" "$imex" "$type" "$hosts" "${user:--}" "${passwd:--}" "$fromdb" "$aimsdb" "$table" "$start_time" "$last_time" "$partition" >> $imex_table
+    printf "$print_format" "${imex:--}" "${type:--}" "${hosts:--}" "${user:--}" "${passwd:--}" "${fromdb:--}" "${aimsdb:--}" "${table:--}" "${start_time:--}" "${last_time:--}" "${partition:--}" >> $imex_table
   done
   IFS=$new_IFS
 done
@@ -81,7 +81,7 @@ for level in ${ware_level[@]}; do
     start_time=$([[ $perl_line == '' ]] && echo $init_time || trim $(echo $perl_line | awk -F '|' '{print $9}'))
     last_time=$([[ $perl_line == '' ]] && echo $init_time || trim $(echo $perl_line | awk -F '|' '{print $10}'))
 
-    printf "$print_format" "$imex" "$beeline_home" "$beeline_host" "$beeline_user" "$beeline_port" "$fromdb" "$aimsdb" "$table_hql" "$start_time" "$last_time" "$partition" >> $imex_table
+    printf "$print_format" "${imex:--}" "${beeline_home:--}" "${beeline_host:--}" "${beeline_user:--}" "${beeline_port:--}" "${fromdb:--}" "${aimsdb:--}" "${table_hql:--}" "${start_time:--}" "${last_time:--}" "${partition:--}" >> $imex_table
   done
 done
 
@@ -95,8 +95,8 @@ echo "$ss" > $imex_table
 # sed -i "1i $(printf '%190s\n' | sed 's/ /-/g')" conf/imex.table
 
 
-info 'Init Conf' '初始化执行结束'
 
 cat $imex_table
 
+info 'Init Conf' '初始化执行结束'
 

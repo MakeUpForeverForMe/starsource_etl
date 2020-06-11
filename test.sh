@@ -1,12 +1,15 @@
 #!/bin/bash
 
+. /etc/profile
+. ~/.bash_profile
+
 # . /home/hdfs/starsource/lib/env.sh
-. $(dirname "${BASH_SOURCE[0]}")/lib/env.sh
+# . $(dirname "${BASH_SOURCE[0]}")/lib/env.sh
 
-test_arg='1:2:3:4'
+# test_arg='1:2:3:4'
 
 
-test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
+# test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 
 
 # while [ true ]; do
@@ -399,32 +402,116 @@ test=$data_direct/ods_source/recommend_flow.201910/recommend_flow.20191022.json
 
 
 
-OPTIND=1
-while getopts :e:m:s:t: opt; do
-  case $opt in
-    (e) etime="$OPTARG" ;;
-    (s) stime="$OPTARG" ;;
-    (m) p_num="$OPTARG" ;;
-    (t) info_type="$OPTARG" ;;
-    (:) echo "请添加参数: -$OPTARG" ;;
-    (?) echo "选项未设置: -$OPTARG" ;;
-    (*) echo "未知情况" ;;
-  esac
-done
-[[ $stime -lt $etime ]] && ftime=$stime stime=$etime etime=$ftime
-for (( ftime = ${stime:=$(date +%Y%m%d)}; ftime >= ${etime:=20190101}; ftime=$(date -d "-1 day $ftime" +%Y%m%d) )); do
-  year_month=${ftime:0:6}   day_of_month=${ftime:6:2}
-  sql+="
-  ALTER TABLE ods_wefix.atd_black_json DROP IF EXISTS PARTITION (year_month='${year_month}',day_of_month='${day_of_month}');
-  ALTER TABLE ods_wefix.atd_black_json ADD IF NOT EXISTS PARTITION (year_month='${year_month}',day_of_month='${day_of_month}');
-  "
-  d_diff=$(( ($(date -d $stime +%s) - $(date -d $ftime +%s)) / 86400 ))
-  [[ ($d_diff != 0 && $(( $d_diff % ${p_num:-150} )) == 0) || $ftime == $etime ]] || continue
-  beeline -u jdbc:hive2://spark:10000 -n hdfs -e "${sql}"
-  unset sql
-done
+# OPTIND=1
+# while getopts :e:m:s:t: opt; do
+#   case $opt in
+#     (e) etime="$OPTARG" ;;
+#     (s) stime="$OPTARG" ;;
+#     (m) p_num="$OPTARG" ;;
+#     (t) info_type="$OPTARG" ;;
+#     (:) echo "请添加参数: -$OPTARG" ;;
+#     (?) echo "选项未设置: -$OPTARG" ;;
+#     (*) echo "未知情况" ;;
+#   esac
+# done
+# [[ $stime -lt $etime ]] && ftime=$stime stime=$etime etime=$ftime
+# for (( ftime = ${stime:=$(date +%Y%m%d)}; ftime >= ${etime:=20190101}; ftime=$(date -d "-1 day $ftime" +%Y%m%d) )); do
+#   year_month=${ftime:0:6}   day_of_month=${ftime:6:2}
+#   sql+="
+#   ALTER TABLE ods_wefix.atd_black_json DROP IF EXISTS PARTITION (year_month='${year_month}',day_of_month='${day_of_month}');
+#   ALTER TABLE ods_wefix.atd_black_json ADD IF NOT EXISTS PARTITION (year_month='${year_month}',day_of_month='${day_of_month}');
+#   "
+#   d_diff=$(( ($(date -d $stime +%s) - $(date -d $ftime +%s)) / 86400 ))
+#   [[ ($d_diff != 0 && $(( $d_diff % ${p_num:-150} )) == 0) || $ftime == $etime ]] || continue
+#   beeline -u jdbc:hive2://spark:10000 -n hdfs -e "${sql}"
+#   unset sql
+# done
 
 
 
+# echo -ne '
+# execut  | beeline  | spark                     | hdfs       | 10000            | -                              | dm_cf       | addition_overview.hql          | 1546272000  | 1546272000  | -
+# execut  | beeline  | spark                     | hdfs       | 10000            | -                              | dm_cf       | adt_admin.hql                  | 1546272000  | 1546272000  | -
+# execut  | beeline  | spark                     | hdfs       | 10000            | -                              | dm_cf       | adt_data.hql                   | 1546272000  | 1546272000  | -
+# execut  | beeline  | spark                     | hdfs       | 10000            | -                              | dm_cf       | advertising_space.hql          | 1546272000  | 1546272000  | -
+# execut  | beeline  | spark                     | hdfs       | 10000            | -                              | dm_cf       | data_preference.hql            | 1546272000  | 1546272000  | -
+# execut  | beeline  | spark                     | hdfs       | 10000            | -                              | dm_cf       | retention_overview.hql         | 1546272000  | 1546272000  | -
+# export  | mysql    | mysql22                   | root       | INikGPLun*8v     | dm_cf                          | microb      | addition_overview              | 1546272000  | 1546272000  | -
+# export  | mysql    | mysql22                   | root       | INikGPLun*8v     | dm_cf                          | microb      | adt_admin                      | 1546272000  | 1546272000  | -
+# export  | mysql    | mysql22                   | root       | INikGPLun*8v     | dm_cf                          | microb      | adt_data                       | 1546272000  | 1546272000  | -
+# export  | mysql    | mysql22                   | root       | INikGPLun*8v     | dm_cf                          | microb      | advertising_space              | 1546272000  | 1546272000  | -
+# export  | mysql    | mysql22                   | root       | INikGPLun*8v     | dm_cf                          | microb      | data_preference                | 1546272000  | 1546272000  | -
+# export  | mysql    | mysql22                   | root       | INikGPLun*8v     | dm_cf                          | microb      | retention_overview             | 1546272000  | 1546272000  | -
+# import  | local    | app41                     | -          | -                | /app_home/logs/ads             | ods_wefix   | access.x.log                   | 1546272000  | 1546272000  | 20190101
+# import  | local    | app41                     | -          | -                | /app_home/logs/ads             | ods_wefix   | bi.x.log                       | 1546272000  | 1546272000  | 20190101
+# import  | local    | app41                     | -          | -                | /app_home/logs/strategy        | ods_wefix   | atd_black.x.log                | 1546272000  | 1546272000  | 20190101
+# import  | local    | app41                     | -          | -                | /app_home/logs/strategy        | ods_wefix   | atd_device.x.log               | 1546272000  | 1546272000  | 20190101
+# import  | local    | app41                     | -          | -                | /app_home/logs/strategy        | ods_wefix   | atd_ip.x.log                   | 1546272000  | 1546272000  | 20190101
+# import  | mongodb  | mongo26                   | mongouser  | 6xVMjclL5DSGJPZ  | starsource                     | ods_source  | CLIENT_INFO                    | 1546272000  | 1546272000  | -
+# import  | mongodb  | mongo26                   | mongouser  | 6xVMjclL5DSGJPZ  | starsource                     | ods_source  | EVENT_LOGGER                   | 1546272000  | 1546272000  | 20190101
+# import  | mongodb  | mongo26                   | mongouser  | 6xVMjclL5DSGJPZ  | starsource                     | ods_source  | FLOW_RECORD                    | 1546272000  | 1546272000  | 20190101
+# import  | mongodb  | mongo26                   | mongouser  | 6xVMjclL5DSGJPZ  | starsource                     | ods_source  | PRODUCT_INFO                   | 1546272000  | 1546272000  | -
+# import  | mongodb  | mongo26                   | mongouser  | 6xVMjclL5DSGJPZ  | starsource                     | ods_source  | RECOMMEND_FLOW                 | 1546272000  | 1546272000  | 20190101
+# import  | mongodb  | mongo26                   | mongouser  | 6xVMjclL5DSGJPZ  | starsource                     | ods_source  | SOURCE_INFO                    | 1546272000  | 1546272000  | -
+# import  | mysql    | mysql07                   | root       | RRDdjhPULOdZ703  | app_builder_um                 | ods_source  | TENANT                         | 1546272000  | 1546272000  | -
+# import  | mysql    | mysql22                   | root       | INikGPLun*8v     | microb                         | ods_wefix   | ACQUISITION_PLAN               | 1546272000  | 1546272000  | -
+# import  | mysql    | mysql22                   | root       | INikGPLun*8v     | microb                         | ods_wefix   | ADVERTISEMENT_INFO             | 1546272000  | 1546272000  | -
+# import  | mysql    | mysql22                   | root       | INikGPLun*8v     | microb                         | ods_wefix   | APP_INFO                       | 1546272000  | 1546272000  | -
+# import  | mysql    | mysql22                   | root       | INikGPLun*8v     | microb                         | ods_wefix   | EXCHANGE_INFO                  | 1546272000  | 1546272000  | -
+# import  | mysql    | mysql22                   | root       | INikGPLun*8v     | microb                         | ods_wefix   | EXCHANGE_INFO_CHILD            | 1546272000  | 1546272000  | -
+# ' | awk -F '[| ]*' '{
+#   print_format="%-7s | %-8s | %-25s | %-10s | %-16s | %-30s | %-11s | %-30s | %-11s | %-11s | %s\n"
+#   if($1 == "import" && $2 == "mysql" && $7 == "ods_source" && $8 == "TENANT"){
+#     format="%-7s | %-8s | %-25s | %-10s | %-16s | %-30s | %-11s | %-30s | %-11s | %-11s | %-8s | ==============\n"
+#     printf format,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11
+#     $8 = "aa"
+#     printf format,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11
+#   }
+#   printf print_format,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11
+#   # > "./conf/imex.table"
+# }'
+
+
+
+
+# during(){
+#   s_time=$(date -d "$1" +%s)
+#   e_time=$(date -d "$2" +%s)
+#   [[ $s_time > $e_time ]] && u=$(( $s_time - $e_time )) || u=$(( $e_time - $s_time ))
+#   s=$(( $u % 60 )) u=$(( $u / 60 ))
+#   m=$(( $u % 60 )) u=$(( $u / 60 ))
+#   h=$(( $u % 24 ))
+#   d=$(( $u / 24 ))
+#   printf '%d天%02d时%02d分%02d秒' $d $h $m $s
+# }
+
+# echo -e "${start:=$(date +'%F %T')} 执行数据任务  开始\n"
+
+# endDate=${1:-$(date -d '-1 day' +%F)}
+
+# while [[ $(date -d "$endDate" +%j) -lt ${today:=$(date +%j)} ]]; do
+#   flag=false
+#   while ! $flag; do
+#     beeline -n hive -u jdbc:hive2://node47:10000 --hivevar compute_date=${endDate} -f ./hive.hql
+#     flag=$([[ $? == 0 ]] && echo true || echo false)
+#   done
+#   endDate=$(date -d "-$(( $today - $(date -d "$endDate" +%j) - 1 )) day" +%F)
+# done
+
+# echo -e "${end:=$(date +'%F %T')} 执行数据任务  结束    用时：$(during $end $start)) )\n\n"
+
+
+# for hql in $base_dir/hive_hql/*; do
+#   sh $base_dir/hive_manage.sh $hql &>> $log_file &
+# done
+
+
+
+
+# file=(${1:-
+#   "$base_dir/hive_hql/ods_new_s.*.hql"
+#   "$base_dir/hive_hql/dw_new.*.hql"
+# })
+# echo ${file[@]} '--' ${file[1]}
 
 
