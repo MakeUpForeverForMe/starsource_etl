@@ -525,24 +525,24 @@
 #   echo bb
 # } 2>&1 1> ./aa.log | tee $aa
 
-s_r_r(){ echo ${1##*/}; }
-a_a(){ echo ${1//@/ }; }
+# s_r_r(){ echo ${1##*/}; }
+# a_a(){ echo ${1//@/ }; }
 
 
-input_file_list=(project_info project_due_bill_no bag_info bag_due_bill_no)
+# input_file_list=(project_info project_due_bill_no bag_info bag_due_bill_no)
 
-for input_file in $@; do
-  input_file_name_arr=($(a_a $(s_r_r $input_file)))
-  input_file_name_len=${#input_file_name_arr[@]}
-  input_file_prefix=${input_file_name_arr[0]}
-  input_file_suffix=${input_file_name_arr[1]}
-  [[ $input_file_name_len != 2 ]] && {
-    printf '%b5s\n' 'a'
-    echo "$(date +'%F %T') 传入的参数【${input_file}，解析后为：${input_file_name_arr[@]}】长度【默认：2；实际：${input_file_name_len}】不正确！"
-    echo "$(date +'%F %T')"
-    echo ""
-    echo ""
-    exit 1
-  }
-  echo $input_file $input_file_prefix $input_file_suffix
-done
+# for input_file in $@; do
+#   input_file_name_arr=($(a_a $(s_r_r $input_file)))
+#   input_file_name_len=${#input_file_name_arr[@]}
+#   input_file_prefix=${input_file_name_arr[0]}
+#   input_file_suffix=${input_file_name_arr[1]}
+#   [[ $input_file_name_len != 2 ]] && {
+#     printf '%b5s\n' 'a'
+#     echo "$(date +'%F %T') 传入的参数【${input_file}，解析后为：${input_file_name_arr[@]}】长度【默认：2；实际：${input_file_name_len}】不正确！"
+#     echo "$(date +'%F %T')"
+#     echo ""
+#     echo ""
+#     exit 1
+#   }
+#   echo $input_file $input_file_prefix $input_file_suffix
+# done
