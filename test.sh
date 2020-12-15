@@ -546,3 +546,15 @@
 #   }
 #   echo $input_file $input_file_prefix $input_file_suffix
 # done
+
+
+
+# grep -Po 'row_type[": ]+\K[^" ]+' file_import/abs_cloud/bag_info/bag_info@test_bag.json
+
+
+
+
+
+
+
+
