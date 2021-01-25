@@ -555,6 +555,29 @@
 
 
 
+dir=/d/Users/ximing.wei/AppData/Local/Temp
+
+sed '/\+/d; s/|/\t/g; s/^\s*//; s/\s*$//' ${dir:-.}/xsh4108.tmp | awk -F '\t' '
+begin{
+  line=""
+}
+function trim(str){
+  sub("^[ ]*", "", str);
+  sub("[ ]*$", "", str);
+  return str
+}
+{
+  print "行数："NR,"\t","列数："NF
+  for(i = 1; i <= NF; i++){
+    col[i]=trim($i)
+    if(NR == 1) {
+      line=$0
+      print line
+    }
+    line+="select "
+    print col
+  }
+}'
 
 
 
