@@ -557,27 +557,35 @@
 
 dir=/d/Users/ximing.wei/AppData/Local/Temp
 
+rows=$(sed '/\+/d; s/|/\t/g; s/^\s*//; s/\s*$//' ${dir:-.}/xsh4108.tmp | wc -l)
 sed '/\+/d; s/|/\t/g; s/^\s*//; s/\s*$//' ${dir:-.}/xsh4108.tmp | awk -F '\t' '
-begin{
-  line=""
-}
 function trim(str){
   sub("^[ ]*", "", str);
   sub("[ ]*$", "", str);
+  sub("[t]*$", "", str);
+  sub("[\\\\]*$", "", str);
   return str
 }
 {
-  print "行数："NR,"\t","列数："NF
+  line = "select "
   for(i = 1; i <= NF; i++){
-    col[i]=trim($i)
     if(NR == 1) {
-      line=$0
-      print line
+      col[i]=trim($i)
+    } else {
+      if(NF != i){
+        line = line "\""trim($i)"\" as "col[i]","
+      } else {
+        line = line "\""trim($i)"\" as "col[i]
+      }
     }
-    line+="select "
-    print col
   }
-}'
+  if(NR != 1){
+    if(NR != rows){
+      line = line" union all"
+    }
+    print line > "tmp.file"
+  }
+}' rows=$rows
 
 
 
